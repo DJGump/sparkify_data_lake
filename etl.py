@@ -25,10 +25,10 @@ def create_spark_session():
 
 def process_song_data(spark, input_data, output_data):
     # get filepath to song data file
-    song_data = input_data
-    
+    song_data = input_data + "song_data/*/*/*/*.json"
+
     # read song data file
-    df = 
+    df = spark.read.json(song_data)
 
     # extract columns to create songs table
     songs_table = 
@@ -85,7 +85,8 @@ def process_log_data(spark, input_data, output_data):
 
 def main():
     spark = create_spark_session()
-    input_data_song = "s3a://udacity-dend/song_data"
+    input_data = "s3a://dgump-spark-bucket/project_data_small/"
+    
     output_data = ""
     
     process_song_data(spark, input_data, output_data)    
