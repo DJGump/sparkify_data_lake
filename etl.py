@@ -25,7 +25,7 @@ def create_spark_session():
 
 def process_song_data(spark, input_data, output_data):
     # get filepath to song data file
-    song_data = 
+    song_data = input_data
     
     # read song data file
     df = 
@@ -85,7 +85,7 @@ def process_log_data(spark, input_data, output_data):
 
 def main():
     spark = create_spark_session()
-    input_data = "s3a://udacity-dend/"
+    input_data_song = "s3a://udacity-dend/song_data"
     output_data = ""
     
     process_song_data(spark, input_data, output_data)    
