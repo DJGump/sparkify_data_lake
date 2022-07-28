@@ -80,7 +80,7 @@ def process_log_data(spark, input_data, output_data):
     songplays_table = 
 
     # write songplays table to parquet files partitioned by year and month
-    songplays_table
+    songplays_table 
 
 
 def main():
