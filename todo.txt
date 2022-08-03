@@ -1,0 +1,11 @@
+1. Create Bootstrap file for EMR
+    * install git
+    * install configparser (maybe)
+    * instal pandas (maybe)
+
+2. Create and write remaining tables to parquet
+    [x] songs
+    [] artists
+    [] users
+    [] time
+    []songplays (fact)

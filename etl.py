@@ -2,17 +2,18 @@ import configparser
 from datetime import datetime
 import os
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import udf, col
+from pyspark.sql.functions import udf, col, when
 from pyspark.sql.functions import year, month, dayofmonth, hour, weekofyear, date_format
+from pyspark.sql.types import StringType, DateType, FloatType
 import sparkify_udfs
 
+# not really sure what this is for...
+# config = configparser.ConfigParser()
 
-config = configparser.ConfigParser()
+# config.read('dl.cfg')
 
-config.read('dl.cfg')
-
-os.environ['AWS_ACCESS_KEY_ID']=config['Secrets']['aws_access_key_id']
-os.environ['AWS_SECRET_ACCESS_KEY']=config['Secrets']['AWS_SECRET_ACCESS_KEY']
+# os.environ['AWS_ACCESS_KEY_ID']=config['Secrets']['aws_access_key_id']
+# os.environ['AWS_SECRET_ACCESS_KEY']=config['Secrets']['AWS_SECRET_ACCESS_KEY']
 
 
 def create_spark_session():
@@ -31,10 +32,16 @@ def process_song_data(spark, input_data, output_data):
     df = spark.read.json(song_data)
 
     # extract columns to create songs table
-    songs_table = 
-    
+    songs_table = df.select(['song_id', 'title', 'year', 'duration']).distinct()
+
+    song_table_yearTyped = songs_table.withColumn('year', when(songs_table['year'] != 0, year(songs_table['year'].cast('string'))).\
+                                                                otherwise(0)
+                                                    )
+        
     # write songs table to parquet files partitioned by year and artist
-    songs_table
+    song_table_yearTyped.write.partitionBy("year").mode('overwrite').parquet('s3://dgump-spark-bucket/analytics/song_table.parquet')
+
+    #s3://dgump-spark-bucket/analytics/
 
     # extract columns to create artists table
     artists_table = 
@@ -54,10 +61,10 @@ def process_log_data(spark, input_data, output_data):
     df = 
 
     # extract columns for users table    
-    artists_table = 
+    users_table = 
     
     # write users table to parquet files
-    artists_table
+    users_table
 
     # create timestamp column from original timestamp column
     get_timestamp = udf()
