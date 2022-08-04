@@ -32,7 +32,8 @@ def process_song_data(spark, input_data, output_data):
     df = spark.read.json(song_data)
 
     # extract columns to create songs table
-    songs_table = df.select(['song_id', 'title', 'year', 'duration']).distinct()
+    # song_id, title, artist_id, year, duration
+    songs_table = df.select(['song_id', 'title', 'artist_id', 'year', 'duration']).distinct()
 
     song_table_yearTyped = songs_table.withColumn('year', when(songs_table['year'] != 0, year(songs_table['year'].cast('string'))).\
                                                                 otherwise(0)
@@ -44,15 +45,19 @@ def process_song_data(spark, input_data, output_data):
     #s3://dgump-spark-bucket/analytics/
 
     # extract columns to create artists table
-    artists_table = 
+    # artist_id, name, location, lattitude, longitude
+    artists_table = df.select(['artist_id', 'artist_name','num_songs', 'artist_location', 'artist_latitude', 'artist_longitude'])
+
+    # drop dupes, found by investigating artist_id
+    artists_table_deduped = artists_table.distinct()
     
     # write artists table to parquet files
-    artists_table
+    artists_table_deduped.write.partitionBy('artist_id').mode('overwrite').parquet('s3://dgump-spark-bucket/analytics/artists_table.parquet')
 
 
 def process_log_data(spark, input_data, output_data):
     # get filepath to log data file
-    log_data =
+    log_data = 
 
     # read log data file
     df = 
@@ -60,7 +65,8 @@ def process_log_data(spark, input_data, output_data):
     # filter by actions for song plays
     df = 
 
-    # extract columns for users table    
+    # extract columns for users table
+    # user_id, first_name, last_name, gender, level    
     users_table = 
     
     # write users table to parquet files
@@ -78,12 +84,14 @@ def process_log_data(spark, input_data, output_data):
     time_table = 
     
     # write time table to parquet files partitioned by year and month
+    start_time, hour, day, week, month, year, weekday
     time_table
 
     # read in song data to use for songplays table
     song_df = 
 
-    # extract columns from joined song and log datasets to create songplays table 
+    # extract columns from joined song and log datasets to create songplays table
+    # songplay_id, start_time, user_id, level, song_id, artist_id, session_id, location, user_agent 
     songplays_table = 
 
     # write songplays table to parquet files partitioned by year and month
