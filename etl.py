@@ -40,9 +40,7 @@ def process_song_data(spark, input_data, output_data):
                                                     )
         
     # write songs table to parquet files partitioned by year and artist
-    song_table_yearTyped.write.partitionBy("year").mode('overwrite').parquet('s3://dgump-spark-bucket/analytics/song_table.parquet')
-
-    #s3://dgump-spark-bucket/analytics/
+    song_table_yearTyped.write.partitionBy("year", "artist_id").mode('overwrite').parquet('s3://dgump-spark-bucket/analytics/song_table.parquet')
 
     # extract columns to create artists table
     # artist_id, name, location, lattitude, longitude
@@ -57,20 +55,20 @@ def process_song_data(spark, input_data, output_data):
 
 def process_log_data(spark, input_data, output_data):
     # get filepath to log data file
-    log_data = 
+    log_data = input_data + "log-data/*.json"
 
     # read log data file
-    df = 
+    df = spark.read.json(log_data)
     
     # filter by actions for song plays
-    df = 
+    df_song_plays = df.select('*').where(col('page') == 'NextSong')
 
     # extract columns for users table
     # user_id, first_name, last_name, gender, level    
-    users_table = 
+    users_table = df_song_plays.select(['userID', 'firstName', 'lastName', 'gender', 'level']).distinct()
     
     # write users table to parquet files
-    users_table
+    users_table.write.partitionBy('userID').mode('overwrite').parquet('s3://dgump-spark-bucket/analytics/users_table.parquet')
 
     # create timestamp column from original timestamp column
     get_timestamp = udf()
@@ -84,7 +82,7 @@ def process_log_data(spark, input_data, output_data):
     time_table = 
     
     # write time table to parquet files partitioned by year and month
-    start_time, hour, day, week, month, year, weekday
+    # start_time, hour, day, week, month, year, weekday
     time_table
 
     # read in song data to use for songplays table
