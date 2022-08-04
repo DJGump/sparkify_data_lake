@@ -8,4 +8,5 @@
     [x] artists
     [x] users
     [] time
+        [] debug udf
     []songplays (fact)

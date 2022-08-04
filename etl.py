@@ -3,9 +3,9 @@ from datetime import datetime
 import os
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf, col, when
-from pyspark.sql.functions import year, month, dayofmonth, hour, weekofyear, date_format
+from pyspark.sql.functions import year, month, dayofmonth, hour, weekofyear, date_format, to_date
 from pyspark.sql.types import StringType, DateType, FloatType
-from sparkify_udfs import *
+from sparkify_udfs import sparkify_get_datetime
 
 # not really sure what this is for...
 # config = configparser.ConfigParser()
@@ -70,19 +70,19 @@ def process_log_data(spark, input_data, output_data):
     # write users table to parquet files
     users_table.write.partitionBy('userID').mode('overwrite').parquet('s3://dgump-spark-bucket/analytics/users_table.parquet')
 
-    # create timestamp column from original timestamp column
-    get_timestamp = udf()
-    df = 
-    
     # create datetime column from original timestamp column
-    get_datetime = udf()
-    df = 
+    get_datetimeUDF = udf(lambda x: sparkify_get_datetime(x))
+    df_song_plays_datetime = df_song_plays.withColumn('datetime', get_datetimeUDF(col('ts')))
     
+    
+
     # extract columns to create time table
+    # start_time, hour, day, week, month, year, weekday
     time_table = 
     
+    # this table seems silly...
     # write time table to parquet files partitioned by year and month
-    # start_time, hour, day, week, month, year, weekday
+    # this table seems silly...
     time_table
 
     # read in song data to use for songplays table
