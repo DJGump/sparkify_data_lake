@@ -5,7 +5,7 @@
 
 2. Create and write remaining tables to parquet
     [x] songs
-    [] artists
-    [] users
+    [x] artists
+    [x] users
     [] time
     []songplays (fact)
