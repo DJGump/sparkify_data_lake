@@ -3,9 +3,9 @@ from datetime import datetime
 import os
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf, col, when
-from pyspark.sql.functions import year, month, dayofmonth, hour, weekofyear, date_format, to_date
+from pyspark.sql.functions import year, month, dayofmonth, hour, weekofyear, dayofweek, date_format, to_date, from_unixtime
 from pyspark.sql.types import StringType, DateType, FloatType
-from sparkify_udfs import sparkify_get_datetime
+# from sparkify_udfs import sparkify_get_datetime
 
 # not really sure what this is for...
 # config = configparser.ConfigParser()
@@ -21,7 +21,17 @@ def create_spark_session():
         .builder \
         .config("spark.jars.packages", "org.apache.hadoop:hadoop-aws:2.7.0") \
         .getOrCreate()
+        #.addFile("sparkify_udfs.py")
     return spark
+
+def get_timestamp(ts):
+    # """
+    # converts timestamp from miliseconds, to seconds, then to a datetime.
+    # Assumes input is of type int, and is a timestamp in miliseconds.
+    # """
+    ts_seconds = ts // 1000
+    ts_seconds_str = str(ts_seconds)
+    return ts_seconds_str
 
 
 def process_song_data(spark, input_data, output_data):
@@ -58,10 +68,10 @@ def process_log_data(spark, input_data, output_data):
     log_data = input_data + "log-data/*.json"
 
     # read log data file
-    df = spark.read.json(log_data)
+    log_df = spark.read.json(log_data)
     
     # filter by actions for song plays
-    df_song_plays = df.select('*').where(col('page') == 'NextSong')
+    df_song_plays = log_df.select('*').where(col('page') == 'NextSong')
 
     # extract columns for users table
     # user_id, first_name, last_name, gender, level    
@@ -71,22 +81,32 @@ def process_log_data(spark, input_data, output_data):
     users_table.write.partitionBy('userID').mode('overwrite').parquet('s3://dgump-spark-bucket/analytics/users_table.parquet')
 
     # create datetime column from original timestamp column
-    get_datetimeUDF = udf(lambda x: sparkify_get_datetime(x))
-    df_song_plays_datetime = df_song_plays.withColumn('datetime', get_datetimeUDF(col('ts')))
+    get_timestampUDF = udf(lambda x: get_timestamp(x), StringType())
+    df_song_plays_datetime = df_song_plays.withColumn('datetime', from_unixtime(get_timestampUDF(col('ts'))))
     
     
 
     # extract columns to create time table
     # start_time, hour, day, week, month, year, weekday
-    time_table = 
-    
-    # this table seems silly...
+    time_table = df_song_plays_datetime.select(
+                                            'datetime',
+                                            date_format('datetime', 'HH:mm:ss').alias('start_time'),
+                                            hour('datetime').alias('hour'),
+                                            dayofmonth('datetime').alias('day'),
+                                            weekofyear('datetime').alias('week'),
+                                            month('datetime').alias('month'),
+                                            year('datetime').alias('year'),
+                                            dayofweek('datetime').alias('weekday')
+    )
+
     # write time table to parquet files partitioned by year and month
     # this table seems silly...
-    time_table
+    #...but what do i know? maybe it saves processing? joins are cheaper than parsing?
+    time_table.write.partitionBy(['year', 'month']).mode('overwrite').parquet('s3://dgump-spark-bucket/analytics/time_table.parquet')
 
     # read in song data to use for songplays table
-    song_df = 
+    song_data = input_data + "song_data/*/*/*/*.json"
+    song_df = spark.read.json(song_data)
 
     # extract columns from joined song and log datasets to create songplays table
     # songplay_id, start_time, user_id, level, song_id, artist_id, session_id, location, user_agent 
