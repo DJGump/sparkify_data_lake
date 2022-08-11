@@ -7,6 +7,8 @@
     [x] songs
     [x] artists
     [x] users
-    [] time
-        [] debug udf
-    []songplays (fact)
+    [x] time
+        [x] debug udf
+    [x]songplays (fact)
+3. [] Final debugging for running file
+4. [] Package and Submit

@@ -37,7 +37,7 @@ def get_timestamp(ts):
 def process_song_data(spark, input_data, output_data):
     # get filepath to song data file
     song_data = input_data + "song_data/*/*/*/*.json"
-
+    
     # read song data file
     df = spark.read.json(song_data)
 
@@ -52,7 +52,7 @@ def process_song_data(spark, input_data, output_data):
     song_table_yearTyped_yearRenamed = song_table_yearTyped.withColumnRenamed('year', 'song_year')
 
     # write songs table to parquet files partitioned by year and artist
-    song_table_yearTyped_yearRenamed.write.partitionBy("song_year", "artist_id").mode('overwrite').parquet('s3://dgump-spark-bucket/analytics/song_table.parquet')
+    song_table_yearTyped_yearRenamed.write.partitionBy("song_year", "artist_id").mode('overwrite').parquet(output_data + 'song_table.parquet')
 
     # extract columns to create artists table
     # artist_id, name, location, lattitude, longitude
@@ -62,7 +62,9 @@ def process_song_data(spark, input_data, output_data):
     artists_table_deduped = artists_table.distinct()
     
     # write artists table to parquet files
-    artists_table_deduped.write.partitionBy('artist_id').mode('overwrite').parquet('s3://dgump-spark-bucket/analytics/artists_table.parquet')
+    artists_table_deduped.write.partitionBy('artist_id').mode('overwrite').parquet(output_data + 'artists_table.parquet')
+
+    return
 
 
 def process_log_data(spark, input_data, output_data):
@@ -85,7 +87,7 @@ def process_log_data(spark, input_data, output_data):
                                     'level']).distinct()
     
     # write users table to parquet files
-    users_table.write.partitionBy('user_id').mode('overwrite').parquet('s3://dgump-spark-bucket/analytics/users_table.parquet')
+    users_table.write.partitionBy('user_id').mode('overwrite').parquet(output_data + 'users_table.parquet')
 
     # create datetime column from original timestamp column
     get_timestampUDF = udf(lambda x: get_timestamp(x), StringType())
@@ -110,7 +112,7 @@ def process_log_data(spark, input_data, output_data):
     # write time table to parquet files partitioned by year and month
     # this table seems silly...
     #...but what do i know? maybe it saves processing? joins are cheaper than parsing?
-    time_table.write.partitionBy(['year', 'month']).mode('overwrite').parquet('s3://dgump-spark-bucket/analytics/time_table.parquet')
+    time_table.write.partitionBy(['year', 'month']).mode('overwrite').parquet(output_data + 'time_table.parquet')
 
     # read in song data to use for songplays table
     song_data = "s3a://dgump-spark-bucket/analytics/song_table.parquet"
@@ -142,14 +144,14 @@ def process_log_data(spark, input_data, output_data):
     )
 
     # write songplays table to parquet files partitioned by year and month
-    songplays_table.write.partitionBy(['year', 'month']).mode('overwrite').parquet('s3://dgump-spark-bucket/analytics/songplays_table.parquet')
+    songplays_table.write.partitionBy(['year', 'month']).mode('overwrite').parquet(output_data + 'songplays_table.parquet')
 
 
 def main():
     spark = create_spark_session()
     input_data = "s3a://dgump-spark-bucket/project_data_small/"
     
-    output_data = ""
+    output_data = "s3a://dgump-spark-bucket/analytics/"
     
     process_song_data(spark, input_data, output_data)    
     process_log_data(spark, input_data, output_data)
