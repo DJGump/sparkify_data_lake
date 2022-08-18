@@ -15,9 +15,9 @@ A data lake and ETL job built with Spark on AWS EMR
     * Note: The installations in steps 3 and 4 are great candidates for cluster bootstrap actions
 5. Run: git clone https://github.com/DJGump/sparkify_data_lake.git
 6. Ensure dl.cfg is configured with your information as follows:
-    * AWS_ACCESS_KEY_ID: <your AWS_ACCESS_KEY_ID>
-    * AWS_SECRET_ACCESS_KEY: <your AWS_SECRET_ACCESS_KEY>
-    * INPUT_PATH: <s3a://your/s3/read/location/[DATA]>
+    * AWS_ACCESS_KEY_ID: [your AWS_ACCESS_KEY_ID]
+    * AWS_SECRET_ACCESS_KEY: [your AWS_SECRET_ACCESS_KEY]
+    * INPUT_PATH: [s3a://your/s3/read/location/[DATA]]
       * Udacity csource: s3://udacity-dend/
         * DATA must be a directory containing two folders of json data, named and partitioned as:
             * song_data/\*/\*/\*/\*.json
