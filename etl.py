@@ -5,15 +5,15 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf, col, when, concat_ws, countDistinct
 from pyspark.sql.functions import year, month, dayofmonth, hour, weekofyear, dayofweek, date_format, to_date, from_unixtime
 from pyspark.sql.types import StringType, DateType, FloatType
-# from sparkify_udfs import sparkify_get_datetime
+
 
 # not really sure what this is for...
-# config = configparser.ConfigParser()
+config = configparser.ConfigParser()
 
-# config.read('dl.cfg')
+config.read('dl.cfg')
 
-# os.environ['AWS_ACCESS_KEY_ID']=config['Secrets']['aws_access_key_id']
-# os.environ['AWS_SECRET_ACCESS_KEY']=config['Secrets']['AWS_SECRET_ACCESS_KEY']
+os.environ['AWS_ACCESS_KEY_ID']=config['Secrets']['aws_access_key_id']
+os.environ['AWS_SECRET_ACCESS_KEY']=config['Secrets']['AWS_SECRET_ACCESS_KEY']
 
 
 def create_spark_session():
@@ -26,7 +26,7 @@ def create_spark_session():
 
 def get_timestamp(ts):
     # """
-    # converts timestamp from miliseconds, to seconds, then to a datetime.
+    # converts timestamp from miliseconds to seconds, then to a datetime.
     # Assumes input is of type int, and is a timestamp in miliseconds.
     # """
     ts_seconds = ts // 1000
@@ -149,9 +149,9 @@ def process_log_data(spark, input_data, output_data):
 
 def main():
     spark = create_spark_session()
-    input_data = "s3a://dgump-spark-bucket/project_data_small/"
+    input_data = config['Paths']['INPUT_PATH']
     
-    output_data = "s3a://dgump-spark-bucket/analytics/"
+    output_data = config['Paths']['OUTPUT_PATH']
     
     process_song_data(spark, input_data, output_data)    
     process_log_data(spark, input_data, output_data)
