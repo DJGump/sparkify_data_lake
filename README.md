@@ -20,7 +20,7 @@ A data lake and ETL job built with Spark on AWS EMR
     * INPUT_PATH: <s3a://your/s3/read/location/[DATA]>
       * Udacity csource: s3://udacity-dend/
         * DATA must be a directory containing two folders of json data, named and partitioned as:
-            * song_data/* /*/*/*.json
+            * song_data/\*/\*/\*/\*.json
             * log-data/*.json
     * OUTPUT_PATH: <s3a://your/s3/write/location/analytics>
         * An S3 path leading to a directory named 'analytics'
