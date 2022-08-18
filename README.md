@@ -11,9 +11,7 @@ A data lake and ETL job built with Spark on AWS EMR
     * All other settings as default
 2. SSH into the master node using the script from the 'Connect to the Master Node Using SSH' modal in the Summary tab of the console for the cluster you started. Refer to AWS documentation for assistance with ssh connections
 3. Install git: yum install git
-    * This may require root permission
 4. Install configparser module: pip install configparser
-    * This may require root permission
     * Note: The installations in steps 3 and 4 are great candidates for cluster bootstrap actions
 5. Run: git clone https://github.com/DJGump/sparkify_data_lake.git
 6. Ensure dl.cfg is configured with your information as follows:
@@ -28,4 +26,3 @@ A data lake and ETL job built with Spark on AWS EMR
         * An S3 path leading to a directory named 'analytics'
     * Edit dl.cfg using the nano editor on the master node after cloning, or fork the directory to make changes to dl.cfg and git clone accordingly
 7. Run etl.py: spark-submit etl.py
-   * May require root permissions
