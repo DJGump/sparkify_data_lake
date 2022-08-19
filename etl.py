@@ -15,14 +15,18 @@ config.read('dl.cfg')
 os.environ['AWS_ACCESS_KEY_ID']=config['Secrets']['aws_access_key_id']
 os.environ['AWS_SECRET_ACCESS_KEY']=config['Secrets']['AWS_SECRET_ACCESS_KEY']
 
-
 def create_spark_session():
     spark = SparkSession \
         .builder \
         .config("spark.jars.packages", "org.apache.hadoop:hadoop-aws:2.7.0") \
         .getOrCreate()
         #.addFile("sparkify_udfs.py")
+    
+    # solution for slow s3 write, issue with older versions of hadoop
+    # https://stackoverflow.com/questions/42822483/extremely-slow-s3-write-times-from-emr-spark
+    sc._jsc.hadoopConfiguration().set("mapreduce.fileoutputcommitter.algorithm.version", "2")
     return spark
+
 
 def get_timestamp(ts):
     # """
@@ -150,6 +154,7 @@ def process_log_data(spark, input_data, output_data):
 def main():
     spark = create_spark_session()
     input_data = config['Paths']['INPUT_PATH']
+
     
     output_data = config['Paths']['OUTPUT_PATH']
     
