@@ -1,6 +1,7 @@
 import configparser
 from datetime import datetime
 import os
+#from pyspark import SparkContext
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf, col, when, concat_ws, countDistinct
 from pyspark.sql.functions import year, month, dayofmonth, hour, weekofyear, dayofweek, date_format, to_date, from_unixtime
@@ -24,7 +25,7 @@ def create_spark_session():
     
     # solution for slow s3 write, issue with older versions of hadoop
     # https://stackoverflow.com/questions/42822483/extremely-slow-s3-write-times-from-emr-spark
-    sc._jsc.hadoopConfiguration().set("mapreduce.fileoutputcommitter.algorithm.version", "2")
+    #sc._jsc.hadoopConfiguration().set("mapreduce.fileoutputcommitter.algorithm.version", "2")
     return spark
 
 
