@@ -120,7 +120,7 @@ def process_log_data(spark, input_data, output_data):
     time_table.write.partitionBy(['year', 'month']).mode('overwrite').parquet(output_data + 'time_table/time_table.parquet')
 
     # read in song data to use for songplays table
-    song_data = "s3a://dgump-spark-bucket/analytics/song_table.parquet"
+    song_data = "s3a://dgump-spark-bucket/analytics/song_table/song_table.parquet"
     song_df = spark.read.parquet(song_data)
 
     # extract columns from joined song and log datasets to create songplays table
