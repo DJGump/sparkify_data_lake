@@ -56,8 +56,10 @@ def process_song_data(spark, input_data, output_data):
     
     song_table_yearTyped_yearRenamed = song_table_yearTyped.withColumnRenamed('year', 'song_year')
 
+    song_table_partitions = song_table_yearTyped_yearRenamed.withColumn('artist_part1', col('artist_id').substr(1,3))
+
     # write songs table to parquet files partitioned by year and artist
-    song_table_yearTyped_yearRenamed.write.partitionBy("song_year", "artist_id").mode('overwrite').parquet(output_data + 'song_table/song_table.parquet')
+    song_table_partitions.write.partitionBy("song_year", 'artist_part1').mode('overwrite').parquet(output_data + 'song_table/song_table.parquet')
 
     # extract columns to create artists table
     # artist_id, name, location, lattitude, longitude
@@ -65,9 +67,12 @@ def process_song_data(spark, input_data, output_data):
 
     # drop dupes, found by investigating artist_id
     artists_table_deduped = artists_table.distinct()
+
+    artists_table_partitions = artists_table_deduped.withColumn('artist_part1', col('artist_id').substr(1,3))\
+                                                    .withColumn('artist_part2', col('artist_id').substr(4,1))
     
     # write artists table to parquet files
-    artists_table_deduped.write.partitionBy('artist_id').mode('overwrite').parquet(output_data + 'artists_table/artists_table.parquet')
+    artists_table_partitions.write.partitionBy('artist_part1', 'artist_part2').mode('overwrite').parquet(output_data + 'artists_table/artists_table.parquet')
 
     return
 
@@ -91,8 +96,13 @@ def process_log_data(spark, input_data, output_data):
                                     'gender', 
                                     'level']).distinct()
     
+    users_table_partitions = users_table.withColumn('user_part1', col('first_name').substr(1,1))\
+                                        .withColumn('user_part2', col('last_name').substr(1,1))
+
     # write users table to parquet files
-    users_table.write.partitionBy('user_id').mode('overwrite').parquet(output_data + 'users_table/users_table.parquet')
+    users_table_partitions.write.partitionBy('user_part1', 'user_part2').mode('overwrite').parquet(output_data + 'users_table/users_table.parquet')
+
+    
 
     # create datetime column from original timestamp column
     get_timestampUDF = udf(lambda x: get_timestamp(x), StringType())
