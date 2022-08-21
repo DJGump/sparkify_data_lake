@@ -1,14 +1,14 @@
 import configparser
 from datetime import datetime
 import os
-#from pyspark import SparkContext
+# from pyspark import SparkContext
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf, col, when, concat_ws, countDistinct
 from pyspark.sql.functions import year, month, dayofmonth, hour, weekofyear, dayofweek, date_format, to_date, from_unixtime
 from pyspark.sql.types import StringType, DateType, FloatType
 
 
-# not really sure what this is for...
+
 config = configparser.ConfigParser()
 
 config.read('dl.cfg')
@@ -19,12 +19,13 @@ os.environ['AWS_SECRET_ACCESS_KEY']=config['Secrets']['AWS_SECRET_ACCESS_KEY']
 def create_spark_session():
     spark = SparkSession \
         .builder \
-        .config("spark.jars.packages", "org.apache.hadoop:hadoop-aws:2.7.1") \
+        .config("spark.jars.packages", "org.apache.hadoop:hadoop-aws:2.7.0") \
         .getOrCreate()
         #.addFile("sparkify_udfs.py")
     
-    # solution for slow s3 write, issue with older versions of hadoop
+    # potential solution for slow s3 write, issue with older versions of hadoop
     # https://stackoverflow.com/questions/42822483/extremely-slow-s3-write-times-from-emr-spark
+    # may not work, trouble accessing sc, and may not affect the running sc
     #sc._jsc.hadoopConfiguration().set("mapreduce.fileoutputcommitter.algorithm.version", "2")
     return spark
 
@@ -120,7 +121,7 @@ def process_log_data(spark, input_data, output_data):
     time_table.write.partitionBy(['year', 'month']).mode('overwrite').parquet(output_data + 'time_table/time_table.parquet')
 
     # read in song data to use for songplays table
-    song_data = "s3a://dgump-spark-bucket/analytics/song_table/song_table.parquet"
+    song_data = output_data + "/song_table/song_table.parquet"
     song_df = spark.read.parquet(song_data)
 
     # extract columns from joined song and log datasets to create songplays table
