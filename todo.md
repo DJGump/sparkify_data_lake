@@ -11,6 +11,7 @@
         [x] debug udf
     [x]songplays (fact)
 3. [x] Final debugging for running file
-4. [] run etl.py against full dataset with full cluster (emr ain't cheap)
+4. [x] run etl.py against full dataset with full cluster (emr ain't cheap)
 4. [] Include environment in repo
-4. [] Package and Submit
+5. [] change readMe per rubric
+6. [] Package and Submit
