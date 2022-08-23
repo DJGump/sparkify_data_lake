@@ -1,5 +1,5 @@
-import configparser
 from datetime import datetime
+import configparser
 import os
 # from pyspark import SparkContext
 from pyspark.sql import SparkSession
@@ -46,6 +46,7 @@ def process_song_data(spark, input_data, output_data):
     
     # read song data file
     df = spark.read.json(song_data)
+    df.cache()
 
     # extract columns to create songs table
     # song_id, title, artist_id, year, duration
@@ -80,7 +81,7 @@ def process_song_data(spark, input_data, output_data):
 
 def process_log_data(spark, input_data, output_data):
     # get filepath to log data file
-    log_data = input_data + "log-data/*.json"
+    log_data = input_data + "log_data/*.json"
 
     # read log data file
     log_df = spark.read.json(log_data)
