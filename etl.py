@@ -46,7 +46,7 @@ def process_song_data(spark, input_data, output_data):
     
     # read song data file
     df = spark.read.json(song_data)
-    df.cache()
+    
 
     # extract columns to create songs table
     # song_id, title, artist_id, year, duration
@@ -59,6 +59,7 @@ def process_song_data(spark, input_data, output_data):
     song_table_yearTyped_yearRenamed = song_table_yearTyped.withColumnRenamed('year', 'song_year')
 
     song_table_partitions = song_table_yearTyped_yearRenamed.withColumn('artist_part1', col('artist_id').substr(1,3))
+    # song_table_partitions.repartition('song_year', 'artist_part1').rdd.getNumPartitions()
 
     # write songs table to parquet files partitioned by year and artist
     song_table_partitions.write.partitionBy("song_year", 'artist_part1').mode('overwrite').parquet(output_data + 'song_table/song_table.parquet')
@@ -81,7 +82,7 @@ def process_song_data(spark, input_data, output_data):
 
 def process_log_data(spark, input_data, output_data):
     # get filepath to log data file
-    log_data = input_data + "log_data/*.json"
+    log_data = input_data + "log-data/*/*/*.json"
 
     # read log data file
     log_df = spark.read.json(log_data)
@@ -127,8 +128,6 @@ def process_log_data(spark, input_data, output_data):
     ).distinct()
 
     # write time table to parquet files partitioned by year and month
-    # this table seems silly...
-    #...but what do i know? maybe it saves processing? joins are cheaper than parsing?
     time_table.write.partitionBy(['year', 'month']).mode('overwrite').parquet(output_data + 'time_table/time_table.parquet')
 
     # read in song data to use for songplays table
