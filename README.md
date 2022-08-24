@@ -23,11 +23,11 @@ This script assumes you are familair with the AWS console and can create an EMR 
    * Install git: yum install git
    * Install configparser module: pip install configparser
 4. Run: git clone https://github.com/DJGump/sparkify_data_lake.git
-5. Navigate into the repo directory resulting from step 5: cd sparkify_data_lake.git
+5. Navigate into the repo directory resulting from step 4: cd sparkify_data_lake.git
 6. Ensure dl.cfg is configured with your information as follows:
     * AWS_ACCESS_KEY_ID: YOUR_AWS_ACCESS_KEY_ID
     * AWS_SECRET_ACCESS_KEY: YOUR_AWS_SECRET_ACCESS_KEY
-    * INPUT_PATH: s3a://your/s3/read/location/DATA
+    * INPUT_PATH: s3://your/s3/read/location/DATA
       * Udacity input path: s3://udacity-dend/
       * DATA must be a directory containing two folders of json data, named and partitioned as:
         * DATA/song_data/\*/\*/\*/\*.json
