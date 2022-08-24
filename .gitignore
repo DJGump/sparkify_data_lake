@@ -132,3 +132,4 @@ scratch.txt
 # dl.cfg
 *.pem
 .vscode
+s3files
