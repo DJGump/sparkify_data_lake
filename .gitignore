@@ -133,3 +133,5 @@ scratch.txt
 *.pem
 .vscode
 s3files
+todo.md
+log_dump/
