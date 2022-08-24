@@ -18,7 +18,7 @@ This script assumes you are familair with the AWS console and can create an EMR 
     * Optional: Select the appropriate EC2 keypair if you are using one
     * Optional: Move the bootstrap.sh file from the repo to an S3 location your cluster can access, and use this location as your bootstrap path. This will handle some additional installations.
     * All other settings as default
-2. SSH into the master node using the script from the 'Connect to the Master Node Using SSH' modal in the Summary tab of the AWS console for your cluster. Refer to AWS documentation for assistance with ssh connections to EMR.
+2. Once the cluster is in 'Running' state, ssh into the master node using the script from the 'Connect to the Master Node Using SSH' modal in the Summary tab of the AWS console for your cluster. Refer to AWS documentation for assistance with ssh connections to EMR.
 3. If you did not use the bootstrap.sh file:
    * Install git: yum install git
    * Install configparser module: pip install configparser
