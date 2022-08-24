@@ -134,4 +134,4 @@ scratch.txt
 .vscode
 s3files
 todo.md
-log_dump/
+/log_dump
