@@ -1,5 +1,5 @@
 # Sparkify Data Lake
-An ETL job built with Python and Spark on AWS EMR. This script uses pyspark to process song and music streaming json data into a star-schema datawarehouse of parquet files. This transforms raw system logs into a format structured for analysis. Processing jobs such as these are essential for analysts to swifly generate insight to inform business decisions.
+An ETL job built with Python and Spark on AWS EMR. This script uses pyspark to process song and music streaming json data into a star-schema datawarehouse of parquet files. This transforms raw system logs into a format structured for analysis. Processing jobs such as these are essential for allowing analysts to swifly generate insight to inform business decisions.
 
 This script assumes you are familair with the AWS console and can create an EMR cluster.
 
