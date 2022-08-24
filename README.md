@@ -38,3 +38,9 @@ This script assumes you are familair with the AWS console and can create an EMR 
 7. Run etl.py: spark-submit etl.py. ~50 minutes .
 
 ### Files
+* etl.py - Python script performing the ETL job.
+* dl.cfg - configuration file, used to update and pass crednetials and input/output paths easily
+* bootstrap.sh - An EMR bootstrap script. Installs git and python module configparser onto the master node
+* README.md - Read Me markdown file
+* LICENSE - License, MIT
+* .gitignore - .gitignore.

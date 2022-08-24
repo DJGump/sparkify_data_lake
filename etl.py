@@ -31,16 +31,19 @@ def create_spark_session():
 
 
 def get_timestamp(ts):
-    # """
-    # converts timestamp from miliseconds to seconds, then to a datetime.
-    # Assumes input is of type int, and is a timestamp in miliseconds.
-    # """
+    """
+    converts timestamp from miliseconds to seconds, then to a datetime.
+    Assumes input is of type int, and is a UNIX timestamp in miliseconds.
+    """
     ts_seconds = ts // 1000
     ts_seconds_str = str(ts_seconds)
     return ts_seconds_str
 
 
 def process_song_data(spark, input_data, output_data):
+    """
+    Reads in song data and processes into song table and artist table. Writes parquet to S3.
+    """
     # get filepath to song data file
     song_data = input_data + "song_data/*/*/*/*.json"
     
@@ -81,6 +84,10 @@ def process_song_data(spark, input_data, output_data):
 
 
 def process_log_data(spark, input_data, output_data):
+    """
+    Reads in log data and processed song data. Processes into user, time, and song play tables. Writes parquet to S3.
+    """
+
     # get filepath to log data file
     log_data = input_data + "log_data/*/*/*.json"
 
