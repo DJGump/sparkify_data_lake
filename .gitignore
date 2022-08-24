@@ -129,9 +129,10 @@ dmypy.json
 .pyre/
 
 scratch.txt
+s3files
 # dl.cfg
 *.pem
 .vscode
-s3files
+
 todo.md
 /log_dump
