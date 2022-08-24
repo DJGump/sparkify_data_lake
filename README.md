@@ -35,7 +35,7 @@ This script assumes you are familair with the AWS console and can create an EMR 
     * OUTPUT_PATH: s3a://your/s3/write/location/ANALYTICS
         * An S3 path leading to a directory named 'ANALYTICS', which will hold the 5 parquet tables being output
     * Edit dl.cfg using the nano editor on the master node after cloning, or fork the repository to make changes to dl.cfg and git clone to the master node accordingly. 
-7. Run etl.py: spark-submit etl.py. ~50 minutes .
+7. Run etl.py: spark-submit etl.py. ~50 minutes w/ three m3.xlarge, ~20 minutes with one m5.xlarge (master) & three c5.2xlarge (workers)*.
 
 ### Files
 * etl.py - Python script performing the ETL job.
@@ -44,3 +44,7 @@ This script assumes you are familair with the AWS console and can create an EMR 
 * README.md - Read Me markdown file
 * LICENSE - License, MIT
 * .gitignore - .gitignore.
+
+
+
+ \* The latter configuration was experimented with because logs from the former indicated the job desired more executors. The larger cluster has 6 executors with 4 cores per executor (may vary with auto-allocate). 6*4, plus the 4 cores of the driver, puts the system total at 28 cores, 4 shy of the default EC2 service quota limit of 32 cores. More research needs to be done on non-hardware optimizations.
