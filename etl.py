@@ -22,28 +22,20 @@ def create_spark_session():
         .config("spark.jars.packages", "org.apache.hadoop:hadoop-aws:2.7.0") \
         .getOrCreate()
         #.addFile("sparkify_udfs.py")
-    
-    # potential solution for slow s3 write, issue with older versions of hadoop
-    # https://stackoverflow.com/questions/42822483/extremely-slow-s3-write-times-from-emr-spark
-    # may not work, trouble accessing sc, and may not affect the running sc
-    #sc._jsc.hadoopConfiguration().set("mapreduce.fileoutputcommitter.algorithm.version", "2")
+
     return spark
 
 
 def get_timestamp(ts):
-    """
-    converts timestamp from miliseconds to seconds, then to a datetime.
-    Assumes input is of type int, and is a UNIX timestamp in miliseconds.
-    """
+    """ converts timestamp from miliseconds to seconds, then to a datetime.
+    Assumes input is of type int, and is a UNIX timestamp in miliseconds."""
     ts_seconds = ts // 1000
     ts_seconds_str = str(ts_seconds)
     return ts_seconds_str
 
 
 def process_song_data(spark, input_data, output_data):
-    """
-    Reads in song data and processes into song table and artist table. Writes parquet to S3.
-    """
+    """Reads in song data and processes into song table and artist table. Writes parquet to S3."""
     # get filepath to song data file
     song_data = input_data + "song_data/*/*/*/*.json"
     
@@ -84,9 +76,7 @@ def process_song_data(spark, input_data, output_data):
 
 
 def process_log_data(spark, input_data, output_data):
-    """
-    Reads in log data and processed song data. Processes into user, time, and song play tables. Writes parquet to S3.
-    """
+    """Reads in log data and processed song data. Processes into user, time, and song play tables. Writes parquet to S3."""
 
     # get filepath to log data file
     log_data = input_data + "log_data/*/*/*.json"
@@ -171,12 +161,15 @@ def process_log_data(spark, input_data, output_data):
 
 
 def main():
-    spark = create_spark_session()
-    input_data = config['Paths']['INPUT_PATH']
+    """ An ETL job built with Python and Spark on AWS EMR. This script uses pyspark to process song and music streaming json data into a star-schema datawarehouse of parquet files on S3. This transforms raw system logs into a format structured for analysis. Processing jobs such as these are essential for allowing analysts to swifly generate insight to inform business decisions.
 
-    
+    This script assumes you are familair with the AWS console, can create an EMR cluster, and read and write S3."""
+
+    spark = create_spark_session()
+
+    input_data = config['Paths']['INPUT_PATH']
     output_data = config['Paths']['OUTPUT_PATH']
-    
+
     process_song_data(spark, input_data, output_data)    
     process_log_data(spark, input_data, output_data)
 
